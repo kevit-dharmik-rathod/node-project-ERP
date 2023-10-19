@@ -5,9 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint-staged": "lint-staged",
     "build": "tsc",
     "start": "npm run build && node ./dist/index.js",
-    "start:dev": "nodemon -e ts --exec \"npm run start\""
+    "start:dev": "nodemon -e ts --exec \"npm run start\"",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "repository": {
     "type": "git",
@@ -25,6 +33,14 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.20",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "eslint": "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.1",
+    "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   }
 }
