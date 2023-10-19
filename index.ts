@@ -1,4 +1,7 @@
 import {app} from './app';
-app.listen(3000,()=>{
-    console.log('Application listening on port',3000);
+import {server} from './config'; 
+
+
+app.listen(server.port,()=>{
+    console.log(`Application running on port ${server.port}`);
 }) 
