@@ -11,9 +11,14 @@ export class App {
   constructor(routers: Router[]) {
     this.app = express();
     this.routers = routers;
-    this.initializeRoutes();
     this.mongoSetup();
+    this.initializeMiddlewares();
+    this.initializeRoutes();
   }
+  initializeMiddlewares() {
+    this.app.use(express.json());
+  }
+
   initializeRoutes() {
     this.routers.forEach((router) => {
       this.app.use('/', router);
