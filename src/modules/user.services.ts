@@ -1,9 +1,10 @@
+// import { NextFunction } from 'express';
 import {User} from './user.model';
 import {IUser} from '../interface';
 
-export const getAllUsers = async (): Promise<IUser[]> => {
+export const getAllUsers = async () => {
   try {
-    return await User.find();
+    return await User.findById('xyz');
   } catch (err) {
     throw err;
   }

@@ -1,6 +1,7 @@
 require('dotenv').config();
 import express from 'express';
 import mongoose from 'mongoose';
+import {ErrorHandler} from './middleware/error-handler';
 import {logger} from './utils/logger';
 import {server} from './config';
 import {Application, Router} from 'express';
@@ -23,6 +24,7 @@ export class App {
     this.routers.forEach((router) => {
       this.app.use('/', router);
     });
+    this.app.use(ErrorHandler);
   }
 
   listen() {
