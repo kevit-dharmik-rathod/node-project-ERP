@@ -12,10 +12,10 @@ export class App {
     this.app = express();
     this.routers = routers;
     this.mongoSetup();
-    this.initializeMIddlewares();
+    this.initializeMiddlewares();
     this.initializeRoutes();
   }
-  initializeMIddlewares() {
+  initializeMiddlewares() {
     this.app.use(express.json());
   }
 
