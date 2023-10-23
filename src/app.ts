@@ -1,5 +1,6 @@
 require('dotenv').config();
 import express from 'express';
+import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import {ErrorHandler} from './middleware/error-handler';
 import {logger} from './utils/logger';
@@ -11,6 +12,7 @@ export class App {
   private routers: Router[];
   constructor(routers: Router[]) {
     this.app = express();
+    this.app.use(bodyParser.json());
     this.routers = routers;
     this.mongoSetup();
     this.initializeMiddlewares();
@@ -18,7 +20,8 @@ export class App {
     this.initializeError();
   }
   initializeMiddlewares() {
-    this.app.use(express.json());
+    // this.app.use(express.json());
+    // // this.app.use(bodyParser.json());
   }
 
   initializeRoutes() {

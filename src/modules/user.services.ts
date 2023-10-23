@@ -6,15 +6,32 @@ import {logger} from '../utils/logger';
 
 export const getAllUsers = async () => {
   try {
-    return await User.findById('xyz');
+    return await User.find();
   } catch (err) {
-    // logger.info(err);
     throw utilityError(500, err);
   }
 };
 
-export const getUser = async (id) => {
+export const findUserById = async (_id: string): Promise<IUser> => {
   try {
-    return await User.findById(id);
-  } catch (err) {}
+    return User.findById(_id);
+  } catch (err) {
+    throw utilityError(500, err);
+  }
+};
+
+export const createNewUser = async (user: IUser): Promise<object> => {
+  try {
+    return await User.create(user);
+  } catch (err) {
+    throw utilityError(500, err);
+  }
+};
+
+export const userFindByEmail = async (email: string): Promise<IUser> => {
+  try {
+    return await User.findOne({email});
+  } catch (err) {
+    throw utilityError(500, err);
+  }
 };
