@@ -15,6 +15,7 @@ export class App {
     this.mongoSetup();
     this.initializeMiddlewares();
     this.initializeRoutes();
+    this.initializeError();
   }
   initializeMiddlewares() {
     this.app.use(express.json());
@@ -24,9 +25,10 @@ export class App {
     this.routers.forEach((router) => {
       this.app.use('/', router);
     });
+  }
+  initializeError() {
     this.app.use(ErrorHandler);
   }
-
   listen() {
     this.app.listen(server.port, () => {
       logger.info(`Application running on port ${server.port}`);
