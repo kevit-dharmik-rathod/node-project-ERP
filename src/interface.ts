@@ -9,3 +9,8 @@ export interface IUser extends Document {
   department: string;
   authToken: string;
 }
+
+export interface ErrorInterface {
+  success: string;
+  error: string;
+}

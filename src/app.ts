@@ -1,6 +1,7 @@
 require('dotenv').config();
 import express from 'express';
 import mongoose from 'mongoose';
+import {ErrorHandler} from './middleware/error-handler';
 import {logger} from './utils/logger';
 import {server} from './config';
 import {Application, Router} from 'express';
@@ -14,6 +15,7 @@ export class App {
     this.mongoSetup();
     this.initializeMiddlewares();
     this.initializeRoutes();
+    this.initializeError();
   }
   initializeMiddlewares() {
     this.app.use(express.json());
@@ -24,7 +26,9 @@ export class App {
       this.app.use('/', router);
     });
   }
-
+  initializeError() {
+    this.app.use(ErrorHandler);
+  }
   listen() {
     this.app.listen(server.port, () => {
       logger.info(`Application running on port ${server.port}`);
