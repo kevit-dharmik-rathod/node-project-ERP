@@ -1,5 +1,8 @@
 import {NextFunction, Request, Response} from 'express';
-import {createNewUser, findUserById, getAllUsers} from './user.services';
+import {User} from './user.model';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import {createNewUser, findUserById, getAllUsers, userFindByEmail, deleteUser} from './user.services';
 import {utilityError} from '../utils/utility-error-handler';
 import {logger} from '../utils/logger';
 
@@ -17,9 +20,12 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction):
 
 export const createUser = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    // logger.info(req.body);
     const user = await createNewUser(req.body);
-    return res.status(200).send({success: true, data: user});
+    logger.info(user);
+    if (!user) {
+      throw utilityError(400, 'either email id already present or fields are missing or incorrect');
+    }
+    return res.status(201).send({success: true, data: user});
   } catch (err) {
     next(err);
   }
@@ -28,6 +34,9 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 export const getUserById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const user = await findUserById(req.params.id);
+    if (!user) {
+      throw utilityError(404, 'User not exist with this id');
+    }
     return res.status(200).json({success: true, data: user});
   } catch (err) {
     next(err);
@@ -37,7 +46,9 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
 export const updateUserById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const user = await findUserById(req.params.id);
-    console.log('user is ', user);
+    if (!user) {
+      throw utilityError(404, 'User not exist with this id');
+    }
     const data = req.body;
     console.log(data);
     const allowedProperties = ['name', 'email', 'password', 'designation', 'mobile', 'department', 'isAdmin'];
@@ -55,15 +66,46 @@ export const updateUserById = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-// export const userLogin = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
-//   try {
-//     if(!req.body.email || req.body.password)
-//     {
-//       throw  utilityError(400,"Email or password is missing");
-//     }
-//     const {email, password} = req.body;
-//     const user = await userFindByEmail(email);
-//   } catch (error){
-//     next(error);
-//   }
-// }
+export const userLogin = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    if (!req.body.email || !req.body.password) {
+      throw utilityError(400, 'Email or password is missing');
+    }
+    const {email, password} = req.body;
+    const user = await userFindByEmail(email);
+    if (!user) {
+      throw utilityError(404, "User doesn't exist");
+    }
+    const checkPassword = await bcrypt.compare(password, user.password);
+    if (checkPassword) {
+      const token = await user.generateAuthToken();
+      user.authToken = token;
+    } else {
+      throw utilityError(400, 'password not matching');
+    }
+    return res.status(200).send({success: true, data: user});
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const userLogout = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const user = await findUserById(req.params.id);
+    if (!user) {
+      throw utilityError(404, 'User not exist with this id');
+    }
+    user.authToken = undefined;
+    await user.save();
+    return res.status(200).send({success: true, data: 'Successfully logged out'});
+  } catch {}
+};
+
+export const deleteUserById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const user = await deleteUser(req.params.id);
+    return res.status(200).json({success: true, data: user});
+  } catch (err) {
+    next(err);
+  }
+};

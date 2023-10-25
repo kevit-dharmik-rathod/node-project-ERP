@@ -8,9 +8,16 @@ export interface IUser extends Document {
   password: string;
   department: string;
   authToken: string;
+  generateAuthToken(): any;
 }
 
 export interface ErrorInterface {
   success: string;
   error: string;
+}
+
+export enum Roles {
+  ADMIN = 'ADMIN',
+  STAFF = 'STAFF',
+  STUDENT = 'STUDENT'
 }

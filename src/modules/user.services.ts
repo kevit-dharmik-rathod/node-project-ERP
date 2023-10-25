@@ -24,6 +24,7 @@ export const createNewUser = async (user: IUser): Promise<object> => {
   try {
     return await User.create(user);
   } catch (err) {
+    logger.info(err);
     throw utilityError(500, err);
   }
 };
@@ -31,6 +32,14 @@ export const createNewUser = async (user: IUser): Promise<object> => {
 export const userFindByEmail = async (email: string): Promise<IUser> => {
   try {
     return await User.findOne({email});
+  } catch (err) {
+    throw utilityError(500, err);
+  }
+};
+
+export const deleteUser = async (_id: string): Promise<IUser> => {
+  try {
+    return await User.findByIdAndDelete(_id);
   } catch (err) {
     throw utilityError(500, err);
   }
