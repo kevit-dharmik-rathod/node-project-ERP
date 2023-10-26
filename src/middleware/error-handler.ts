@@ -8,6 +8,6 @@ export const ErrorHandler = (err: Error, req: Request, res: Response, next: Next
   // }
   return res.status(code).json({
     success: 'error',
-    error: error
+    error: error || error.message
   });
 };
