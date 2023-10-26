@@ -11,11 +11,6 @@ export interface IUser extends Document {
   generateAuthToken(): any;
 }
 
-export interface ErrorInterface {
-  success: string;
-  error: string;
-}
-
 export enum Roles {
   ADMIN = 'ADMIN',
   STAFF = 'STAFF',
