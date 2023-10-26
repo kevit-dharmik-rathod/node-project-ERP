@@ -23,6 +23,7 @@ module.exports = {
      '@typescript-eslint/no-explicit-any': 'off',
      '@typescript-eslint/no-var-requires': 0,
      '@typescript-eslint/no-unused-vars': ["off"],
+     "@typescript-eslint/no-this-alias": ["off"],
      "prettier/prettier": [
        "warn",
        {

@@ -1,5 +1,10 @@
+require('dotenv').config();
 import {Schema, model} from 'mongoose';
-
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import {Roles} from '../interface';
+import {logger} from '../utils/logger';
+import {jwtToken} from '../config';
 const userSchema = new Schema({
   name: {
     type: String,
@@ -19,20 +24,56 @@ const userSchema = new Schema({
     required: true
   },
   mobile: {
-    type: String,
+    type: Schema.Types.Number,
     required: true
   },
   department: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'Department'
+    type: String,
+    required: true
+    // ref: '
   },
-  isAdmin: {
-    type: Boolean,
+  role: {
+    type: String,
     required: true
   },
   authToken: {
     type: String
+  }
+});
+
+userSchema.methods.toJSON = function () {
+  const user = this;
+  const userObject = user.toObject();
+  delete userObject.password;
+  return userObject;
+};
+
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign({_id: user.id.toString(), role: user.role}, jwtToken.authSecret);
+  user.authToken = token;
+  logger.info(typeof token);
+  return token;
+};
+
+userSchema.pre('save', async function (next) {
+  try {
+    if (this.isModified('password')) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
+    switch (this.role) {
+      case 'ADMIN':
+        this.role = Roles.ADMIN;
+        break;
+      case 'STAFF':
+        this.role = Roles.STAFF;
+        break;
+      default:
+        break;
+    }
+    next();
+  } catch (err) {
+    throw err;
   }
 });
 
