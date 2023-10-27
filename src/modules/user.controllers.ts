@@ -96,7 +96,7 @@ export const userLogout = async (req: Request, res: Response, next: NextFunction
     }
     user.authToken = undefined;
     await user.save();
-    return res.status(200).send({success: true, data: user});
+    return res.status(200).send({success: true, data: 'Successfully log out'});
   } catch (err) {
     logger.error(`Error while logging out ${err}`);
     next(err);
@@ -109,7 +109,7 @@ export const deleteUserById = async (req: Request, res: Response, next: NextFunc
     if (!user) {
       throw utilityError(404, 'User not exist with this id');
     }
-    return res.status(200).json({success: true, data: user});
+    return res.status(200).json({success: true, data: 'User deleted successfully'});
   } catch (err) {
     next(err);
   }
@@ -134,7 +134,7 @@ export const updateOwnProfile = async (req: Request, res: Response, next: NextFu
     const {_id, role} = req['auth'];
     const user = await findUserById(_id);
     if (!user) {
-      throw utilityError(404, 'User not exist with this id');
+      throw utilityError(400, 'User not exist with this id');
     }
     const data = req.body;
     const allowedProperties = ['password'];

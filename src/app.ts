@@ -1,11 +1,29 @@
 require('dotenv').config();
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import {ErrorHandler} from './middleware/error-handler';
 import {logger} from './utils/logger';
 import {server} from './config';
 import {Application, Router} from 'express';
 import {mongoConfig} from './config';
+
+const corsConfig = {
+  origin: 'http://127.0.0.1:5500',
+  methods: ['GET', 'POST', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: [
+    'Origin',
+    'Accept',
+    'Host',
+    'User-Agent',
+    'Content-Type',
+    'Connection',
+    'Accept-Encoding',
+    'Authorization'
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 export class App {
   public app: Application;
   private routers: Router[];
@@ -19,6 +37,7 @@ export class App {
   }
   initializeMiddlewares() {
     this.app.use(express.json());
+    this.app.use(cors(corsConfig));
   }
 
   initializeRoutes() {
