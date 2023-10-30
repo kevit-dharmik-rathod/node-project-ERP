@@ -10,8 +10,8 @@ import {
   userLogout,
   updateOwnProfile
 } from './user.controllers';
-import {authentication} from '../middleware/authenticate';
-import {authorization} from '../middleware/authorization';
+import {authentication} from '../../middleware/authenticate';
+import {authorization} from '../../middleware/authorization';
 
 const route = 'users';
 export const router = Router();
@@ -20,7 +20,7 @@ export const router = Router();
 router.post(`/${route}/signup`, authentication, authorization(['ADMIN']), createUser);
 
 //Get all users by only admin
-router.get(`/${route}`, getUsers);
+router.get(`/${route}`, authentication, authorization, getUsers);
 
 //login user
 router.post(`/${route}/login`, userLogin);

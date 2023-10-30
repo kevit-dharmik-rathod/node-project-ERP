@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response} from 'express';
 import bcrypt from 'bcryptjs';
-import {createNewUser, findUserById, getAllUsers, userFindByEmail, deleteUser} from './user.services';
-import {utilityError} from '../utils/utility-error-handler';
-import {logger} from '../utils/logger';
+import {createNewUser, findUserById, getAllUsers, userFindByEmail, deleteUser} from '../users/user.services';
+import {utilityError} from '../../utils/utility-error-handler';
+import {logger} from '../../utils/logger';
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {

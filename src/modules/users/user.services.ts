@@ -1,7 +1,7 @@
 import {User} from './user.model';
-import {IUser} from '../interface';
-import {utilityError} from '../utils/utility-error-handler';
-import {logger} from '../utils/logger';
+import {IUser} from '../../interface';
+import {utilityError} from '../../utils/utility-error-handler';
+import {logger} from '../../utils/logger';
 
 export const getAllUsers = async () => {
   try {
