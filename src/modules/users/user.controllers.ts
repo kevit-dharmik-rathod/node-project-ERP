@@ -4,6 +4,13 @@ import {createNewUser, findUserById, getAllUsers, userFindByEmail, deleteUser} f
 import {utilityError} from '../../utils/utility-error-handler';
 import {logger} from '../../utils/logger';
 
+/**
+ * get all users
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const getUsers = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const users = await getAllUsers();
@@ -17,6 +24,13 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction):
   }
 };
 
+/**
+ * create new user
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const createUser = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const user = await createNewUser(req.body);
@@ -30,6 +44,13 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+/**
+ * get user by it's id
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const getUserById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const user = await findUserById(req.params.id);
@@ -43,33 +64,29 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+/**
+ * update user by it's id
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const updateUserById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    const {_id, role} = req['auth'];
-    const user = await findUserById(_id);
+    const user = await findUserById(req.params.id);
     if (!user) {
       throw utilityError(400, 'User not exist with this id');
     }
     const data = req.body;
-    if (role === 'ADMIN') {
-      const allowedProperties = ['name', 'email', 'password', 'designation', 'mobile', 'department', 'isAdmin'];
-      for (const prop in data) {
-        if (allowedProperties.includes(prop)) {
-          user[prop] = data[prop];
-        } else {
-          throw utilityError(400, 'additional or incorrect fields are not allowed');
-        }
-        await user.save();
-        return res.status(200).json({success: true, data: user});
-      }
-    } else {
-      const allowedProperties = ['password'];
-      for (const prop in data) {
-        if (allowedProperties.includes(prop)) {
-          user[prop] = data[prop];
-        } else {
-          throw utilityError(400, 'additional or incorrect fields are not allowed');
-        }
+    if (data.hasOwnProperty('password')) {
+      throw utilityError(400, 'You can not change others password');
+    }
+    const allowedProperties = ['name', 'email', 'designation', 'mobile', 'department', 'isAdmin'];
+    for (const prop in data) {
+      if (allowedProperties.includes(prop)) {
+        user[prop] = data[prop];
+      } else {
+        throw utilityError(400, 'additional or incorrect fields are not allowed');
       }
       await user.save();
       return res.status(200).json({success: true, data: user});
@@ -80,6 +97,54 @@ export const updateUserById = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+/**
+ * update own profile
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
+export const updateSelf = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const {_id, role} = req['auth'];
+    const user = await findUserById(_id);
+    if (!user) {
+      throw utilityError(400, 'User not exist with this id');
+    }
+    const data = req.body;
+    if (role === 'ADMIN') {
+      const allowedProperties = ['name', 'email', 'designation', 'mobile', 'department', 'isAdmin', 'password'];
+      for (const prop in data) {
+        if (allowedProperties.includes(prop)) {
+          user[prop] = data[prop];
+        } else {
+          throw utilityError(400, 'additional or incorrect fields are not allowed');
+        }
+        await user.save();
+        return res.status(200).json({success: true, data: user});
+      }
+    } else {
+      if (Object.keys(data).length === 1 && data.hasOwnProperty('password')) {
+        user['password'] = data['password'];
+        await user.save();
+        return res.status(200).send({success: true, data: 'password updated successfully'});
+      } else {
+        throw utilityError(400, 'Your access right allows you to change only password');
+      }
+    }
+  } catch (err) {
+    logger.error(`Error in controller while updating own profile ${err}`);
+    next(err);
+  }
+};
+
+/**
+ * log in user
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const userLogin = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     if (!req.body.email || !req.body.password) {
@@ -105,6 +170,13 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
+/**
+ * logout user
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const userLogout = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const user = await findUserById(req['auth']._id);
@@ -120,6 +192,13 @@ export const userLogout = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+/**
+ * delete user by it's id
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const deleteUserById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const user = await deleteUser(req.params.id);
@@ -133,6 +212,13 @@ export const deleteUserById = async (req: Request, res: Response, next: NextFunc
   }
 };
 
+/**
+ * get my profile
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const getMyProfile = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const {_id} = req['auth'];

@@ -37,6 +37,10 @@ const studentSchema = new Schema({
     type: Number,
     required: true
   },
+  // batch: {
+  //   type: Number,
+  //   required: true
+  // },
   authToken: {
     type: String
   }
@@ -61,7 +65,7 @@ studentSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
       this.password = await bcrypt.hash(this.password, 8);
     }
-    if (this.isModified('role') && this.role !== Roles.STUDENT) {
+    if (this.isModified('role')) {
       throw utilityError(400, 'Enter valid role');
     }
     next();

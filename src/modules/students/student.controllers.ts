@@ -4,6 +4,13 @@ import {createStudent, findByEmail, findStudentById, findStudents, findAndDelete
 import {logger} from '../../utils/logger';
 import {utilityError} from '../../utils/utility-error-handler';
 
+/**
+ * get all students
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const getStudents = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const students = await findStudents();
@@ -14,6 +21,13 @@ export const getStudents = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+/**
+ * create new student
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const newStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const student = await createStudent(req.body);
@@ -24,6 +38,13 @@ export const newStudent = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+/**
+ * get single student by it's id
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const getStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const student = await findStudentById(req.params.id);
@@ -34,6 +55,13 @@ export const getStudent = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+/**
+ * login student
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const loginStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const {email, password} = req.body;
@@ -56,6 +84,13 @@ export const loginStudent = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
+/**
+ * logout student
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const logoutStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const {_id} = req['auth'];
@@ -69,6 +104,13 @@ export const logoutStudent = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+/**
+ * get own profile
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const getProfile = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const {_id} = req['auth'];
@@ -80,32 +122,27 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+/**
+ * update profile
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const updateProfile = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    const {_id, role} = req['auth'];
+    const {role} = req['auth'];
     const student = await findStudentById(req.params.id);
     if (!student) {
       throw utilityError(400, 'User not exist with this id');
     }
     const data = req.body;
-    if (role === 'ADMIN' || role === 'STAFF') {
-      const allowedProperties = ['name', 'email', 'password', 'designation', 'mobile', 'department', 'isAdmin'];
-      for (const prop in data) {
-        if (allowedProperties.includes(prop)) {
-          student[prop] = data[prop];
-        } else {
-          throw utilityError(400, 'additional or incorrect fields are not allowed');
-        }
-        await student.save();
-      }
-    } else {
-      const allowedProperties = ['password'];
-      for (const prop in data) {
-        if (allowedProperties.includes(prop)) {
-          student[prop] = data[prop];
-        } else {
-          throw utilityError(400, 'additional or incorrect fields are not allowed');
-        }
+    const allowedProperties = ['name', 'email', 'password', 'designation', 'mobile', 'department', 'isAdmin'];
+    for (const prop in data) {
+      if (allowedProperties.includes(prop)) {
+        student[prop] = data[prop];
+      } else {
+        throw utilityError(400, 'additional or incorrect fields are not allowed');
       }
       await student.save();
     }
@@ -116,6 +153,44 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+/**
+ * get own profile
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
+export const updateSelf = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const {_id, role} = req['auth'];
+    const student = await findStudentById(_id);
+    if (!student) {
+      throw utilityError(400, 'User not exist with this id');
+    }
+    const data = req.body;
+    const allowedProperties = ['password'];
+    for (const prop in data) {
+      if (allowedProperties.includes(prop)) {
+        student[prop] = data[prop];
+      } else {
+        throw utilityError(400, 'additional or incorrect fields are not allowed');
+      }
+    }
+    await student.save();
+    return res.status(200).json({success: true, data: student});
+  } catch (err) {
+    logger.error(`Error while updating own profile ${err}`);
+    next(err);
+  }
+};
+
+/**
+ * delete student
+ * @param {Request} req => Express Request
+ * @param {Response} res => Express Response
+ * @param {NextFunction} next => Express next function
+ * @returns {Promise<Response>} => promise with response
+ */
 export const deleteStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const student = await findAndDelete(req.params.id);
