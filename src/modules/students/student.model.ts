@@ -19,7 +19,6 @@ const studentSchema = new Schema({
   },
   role: {
     type: String,
-    required: true,
     default: Roles.STUDENT
   },
   mobile: {
