@@ -42,12 +42,12 @@ const studentSchema = new Schema({
   }
 });
 
-// studentSchema.methods.toJSON = function () {
-//   const student = this;
-//   const studentObject = student.toObject();
-//   delete studentObject.password;
-//   return studentObject;
-// };
+studentSchema.methods.toJSON = function () {
+  const student = this;
+  const studentObject = student.toObject();
+  delete studentObject.password;
+  return studentObject;
+};
 
 studentSchema.methods.generateAuthToken = async function () {
   const student = this;

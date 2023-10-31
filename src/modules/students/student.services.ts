@@ -35,5 +35,15 @@ export const findByEmail = async (email: string): Promise<IStudent> => {
     return await Student.findOne({email});
   } catch (err) {
     logger.error(`Error occurred in services while finding student by email ${err}`);
+    throw utilityError(500, err);
+  }
+};
+
+export const findAndDelete = async (_id: string): Promise<IStudent> => {
+  try {
+    return await Student.findByIdAndDelete(_id);
+  } catch (err) {
+    logger.error(`Error occurred in services while deleting user by it's id ${err}`);
+    throw utilityError(500, err);
   }
 };

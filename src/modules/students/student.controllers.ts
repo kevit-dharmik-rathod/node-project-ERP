@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from 'express';
 import bcrypt from 'bcryptjs';
-import {createStudent, findByEmail, findStudentById, findStudents} from './student.services';
+import {createStudent, findByEmail, findStudentById, findStudents, findAndDelete} from './student.services';
 import {logger} from '../../utils/logger';
 import {utilityError} from '../../utils/utility-error-handler';
 
@@ -80,26 +80,49 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const updateSelf = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+export const updateProfile = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const {_id, role} = req['auth'];
-    const student = await findStudentById(_id);
+    const student = await findStudentById(req.params.id);
     if (!student) {
       throw utilityError(400, 'User not exist with this id');
     }
     const data = req.body;
-    const allowedProperties = ['password'];
-    for (const prop in data) {
-      if (allowedProperties.includes(prop)) {
-        student[prop] = data[prop];
-      } else {
-        throw utilityError(400, 'additional or incorrect fields are not allowed');
+    if (role === 'ADMIN' || role === 'STAFF') {
+      const allowedProperties = ['name', 'email', 'password', 'designation', 'mobile', 'department', 'isAdmin'];
+      for (const prop in data) {
+        if (allowedProperties.includes(prop)) {
+          student[prop] = data[prop];
+        } else {
+          throw utilityError(400, 'additional or incorrect fields are not allowed');
+        }
+        await student.save();
       }
+    } else {
+      const allowedProperties = ['password'];
+      for (const prop in data) {
+        if (allowedProperties.includes(prop)) {
+          student[prop] = data[prop];
+        } else {
+          throw utilityError(400, 'additional or incorrect fields are not allowed');
+        }
+      }
+      await student.save();
     }
-    await student.save();
     return res.status(200).json({success: true, data: student});
   } catch (err) {
-    logger.error(`Error while updating own profile ${err}`);
+    logger.error(`Error in controller while updating own profile ${err}`);
+    next(err);
+  }
+};
+
+export const deleteStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const student = await findAndDelete(req.params.id);
+    // logger.info(`student in controller ${student}`);
+    return res.status(200).json({success: true, data: 'student deleted successfully' || 'student nor exist'});
+  } catch (err) {
+    logger.error(`Error in controller while deleting student ${err}`);
     next(err);
   }
 };

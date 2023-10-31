@@ -1,5 +1,14 @@
 import {Router} from 'express';
-import {getProfile, getStudent, getStudents, loginStudent, logoutStudent, newStudent} from './student.controllers';
+import {
+  getProfile,
+  getStudent,
+  getStudents,
+  loginStudent,
+  logoutStudent,
+  newStudent,
+  updateProfile,
+  deleteStudent
+} from './student.controllers';
 import {authentication} from '../../middleware/authenticate';
 import {authorization} from '../../middleware/authorization';
 
@@ -21,5 +30,11 @@ router.get(`/${route}/me`, authentication, authorization(['STUDENT']), getProfil
 //logout student
 router.post(`/${route}/logout/me`, authentication, logoutStudent);
 
+//update profile
+router.patch(`/${route}/:id`, authentication, authorization(['ADMIN', 'STAFF', 'STUDENT']), updateProfile);
+
 //get student by id
 router.get(`/${route}/:id`, authentication, authorization(['STAFF', 'ADMIN']), getStudent);
+
+//delete student
+router.delete(`/${route}/:id`, authentication, authorization(['STAFF', 'ADMIN']), deleteStudent);

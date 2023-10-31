@@ -7,8 +7,7 @@ import {
   getUsers,
   updateUserById,
   userLogin,
-  userLogout,
-  updateOwnProfile
+  userLogout
 } from './user.controllers';
 import {authentication} from '../../middleware/authenticate';
 import {authorization} from '../../middleware/authorization';
@@ -20,7 +19,7 @@ export const router = Router();
 router.post(`/${route}/signup`, authentication, authorization(['ADMIN']), createUser);
 
 //Get all users by only admin
-router.get(`/${route}`, authentication, authorization, getUsers);
+router.get(`/${route}`, authentication, authorization(['ADMIN']), getUsers);
 
 //login user
 router.post(`/${route}/login`, userLogin);
@@ -34,11 +33,8 @@ router.get(`/${route}/me`, authentication, getMyProfile);
 //get profile by id which only access by admin
 router.get(`/${route}/:id`, authentication, authorization(['ADMIN']), getUserById);
 
-//update only own profile by staff
-router.patch(`/${route}/update/me`, authentication, authorization(['STAFF', 'ADMIN']), updateOwnProfile);
-
 //update profile using id by admin either update own profile or update staff profile
-router.patch(`/${route}/update/:id`, authentication, authorization(['ADMIN']), updateUserById);
+router.patch(`/${route}/update/:id`, authentication, authorization(['ADMIN', 'STAFF']), updateUserById);
 
 //delete user by admin
 router.delete(`/${route}/delete/:id`, authentication, authorization(['ADMIN']), deleteUserById);
