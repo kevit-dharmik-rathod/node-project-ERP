@@ -2,9 +2,9 @@ require('dotenv').config();
 import {Schema, model} from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import {Roles} from '../interface';
-import {logger} from '../utils/logger';
-import {jwtToken} from '../config';
+import {Roles} from '../../interface';
+import {logger} from '../../utils/logger';
+import {jwtToken} from '../../config';
 const userSchema = new Schema({
   name: {
     type: String,
@@ -52,7 +52,6 @@ userSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = jwt.sign({_id: user.id.toString(), role: user.role}, jwtToken.authSecret);
   user.authToken = token;
-  logger.info(typeof token);
   return token;
 };
 

@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response} from 'express';
 import bcrypt from 'bcryptjs';
-import {createNewUser, findUserById, getAllUsers, userFindByEmail, deleteUser} from './user.services';
-import {utilityError} from '../utils/utility-error-handler';
-import {logger} from '../utils/logger';
+import {createNewUser, findUserById, getAllUsers, userFindByEmail, deleteUser} from '../users/user.services';
+import {utilityError} from '../../utils/utility-error-handler';
+import {logger} from '../../utils/logger';
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
@@ -12,6 +12,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction):
     }
     return res.status(200).send({success: true, data: users});
   } catch (err) {
+    logger.error(`Error in controller while getting all users: ${err}`);
     next(err);
   }
 };
@@ -24,7 +25,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     }
     return res.status(201).send({success: true, data: user});
   } catch (err) {
-    logger.error(`Error while creating user: ${err} `);
+    logger.error(`Error in controller while creating user: ${err} `);
     next(err);
   }
 };
@@ -37,29 +38,44 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
     }
     return res.status(200).json({success: true, data: user});
   } catch (err) {
+    logger.error(`Error in controller while getting user by id: ${err} `);
     next(err);
   }
 };
 
 export const updateUserById = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    const user = await findUserById(req.params.id);
+    const {_id, role} = req['auth'];
+    const user = await findUserById(_id);
     if (!user) {
-      throw utilityError(404, 'User not exist with this id');
+      throw utilityError(400, 'User not exist with this id');
     }
     const data = req.body;
-    console.log(data);
-    const allowedProperties = ['name', 'email', 'password', 'designation', 'mobile', 'department', 'isAdmin'];
-    for (const prop in data) {
-      if (allowedProperties.includes(prop)) {
-        user[prop] = data[prop];
-      } else {
-        throw utilityError(400, 'additional or incorrect fields are not allowed');
+    if (role === 'ADMIN') {
+      const allowedProperties = ['name', 'email', 'password', 'designation', 'mobile', 'department', 'isAdmin'];
+      for (const prop in data) {
+        if (allowedProperties.includes(prop)) {
+          user[prop] = data[prop];
+        } else {
+          throw utilityError(400, 'additional or incorrect fields are not allowed');
+        }
+        await user.save();
+        return res.status(200).json({success: true, data: user});
       }
+    } else {
+      const allowedProperties = ['password'];
+      for (const prop in data) {
+        if (allowedProperties.includes(prop)) {
+          user[prop] = data[prop];
+        } else {
+          throw utilityError(400, 'additional or incorrect fields are not allowed');
+        }
+      }
+      await user.save();
+      return res.status(200).json({success: true, data: user});
     }
-    await user.save();
-    return res.status(200).json({success: true, data: user});
   } catch (err) {
+    logger.error(`Error in controller while updating own profile ${err}`);
     next(err);
   }
 };
@@ -83,8 +99,9 @@ export const userLogin = async (req: Request, res: Response, next: NextFunction)
       throw utilityError(400, 'password not matching');
     }
     return res.status(200).send({success: true, data: user});
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    logger.error(`Error in controller while login user: ${err} `);
+    next(err);
   }
 };
 
@@ -111,6 +128,7 @@ export const deleteUserById = async (req: Request, res: Response, next: NextFunc
     }
     return res.status(200).json({success: true, data: 'User deleted successfully'});
   } catch (err) {
+    logger.error(`Error in controller while deleting user: ${err} `);
     next(err);
   }
 };
@@ -124,31 +142,7 @@ export const getMyProfile = async (req: Request, res: Response, next: NextFuncti
     }
     return res.status(200).send({success: true, data: user});
   } catch (err) {
-    logger.error(`Error while get own profile ${err}`);
-    next(err);
-  }
-};
-
-export const updateOwnProfile = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
-  try {
-    const {_id, role} = req['auth'];
-    const user = await findUserById(_id);
-    if (!user) {
-      throw utilityError(400, 'User not exist with this id');
-    }
-    const data = req.body;
-    const allowedProperties = ['password'];
-    for (const prop in data) {
-      if (allowedProperties.includes(prop)) {
-        user[prop] = data[prop];
-      } else {
-        throw utilityError(400, 'additional or incorrect fields are not allowed');
-      }
-    }
-    await user.save();
-    return res.status(200).json({success: true, data: user});
-  } catch (err) {
-    logger.error(`Error while updating own profile ${err}`);
+    logger.error(`Error in controller while get own profile ${err}`);
     next(err);
   }
 };
