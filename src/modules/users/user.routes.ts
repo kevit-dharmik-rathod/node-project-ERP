@@ -7,7 +7,8 @@ import {
   getUsers,
   updateUserById,
   userLogin,
-  userLogout
+  userLogout,
+  updateSelf
 } from './user.controllers';
 import {authentication} from '../../middleware/authenticate';
 import {authorization} from '../../middleware/authorization';
@@ -30,11 +31,14 @@ router.post(`/${route}/logout/me`, authentication, userLogout);
 //Read only own profile
 router.get(`/${route}/me`, authentication, getMyProfile);
 
+//update own profile means admin want to update its profile
+router.patch(`/${route}/update/me`, authentication, updateSelf);
+
 //get profile by id which only access by admin
 router.get(`/${route}/:id`, authentication, authorization(['ADMIN']), getUserById);
 
 //update profile using id by admin either update own profile or update staff profile
-router.patch(`/${route}/update/:id`, authentication, authorization(['ADMIN', 'STAFF']), updateUserById);
+router.patch(`/${route}/update/:id`, authentication, authorization(['ADMIN']), updateUserById);
 
 //delete user by admin
 router.delete(`/${route}/delete/:id`, authentication, authorization(['ADMIN']), deleteUserById);

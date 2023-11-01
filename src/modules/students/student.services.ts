@@ -3,6 +3,9 @@ import {IStudent} from '../../interface';
 import {Student} from './student.model';
 import {utilityError} from '../../utils/utility-error-handler';
 
+/**
+ * @returns {Promise<IStudent[]} => return promise with array of students
+ */
 export const findStudents = async (): Promise<IStudent[]> => {
   try {
     return await Student.find();
@@ -12,6 +15,11 @@ export const findStudents = async (): Promise<IStudent[]> => {
   }
 };
 
+/**
+ *
+ * @param {student} => student object
+ * @returns {Promise<object>} => return Promise with student object
+ */
 export const createStudent = async (student: object): Promise<object> => {
   try {
     return await Student.create(student);
@@ -21,6 +29,11 @@ export const createStudent = async (student: object): Promise<object> => {
   }
 };
 
+/**
+ *
+ * @param _id => student id
+ * @returns {Promise<IStudent>} => promise with IStudent object
+ */
 export const findStudentById = async (_id: string): Promise<IStudent> => {
   try {
     return await Student.findById(_id);
@@ -30,6 +43,11 @@ export const findStudentById = async (_id: string): Promise<IStudent> => {
   }
 };
 
+/**
+ *
+ * @param email => string
+ * @returns {Promise<IStudent>} => return a Promise with IStudent object
+ */
 export const findByEmail = async (email: string): Promise<IStudent> => {
   try {
     return await Student.findOne({email});
@@ -39,6 +57,11 @@ export const findByEmail = async (email: string): Promise<IStudent> => {
   }
 };
 
+/**
+ *
+ * @param _id => student id
+ * @returns {Promise<IStudent>} => return a Promise with IStudent object
+ */
 export const findAndDelete = async (_id: string): Promise<IStudent> => {
   try {
     return await Student.findByIdAndDelete(_id);

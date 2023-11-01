@@ -7,10 +7,12 @@ import {
   logoutStudent,
   newStudent,
   updateProfile,
-  deleteStudent
+  deleteStudent,
+  updateSelf
 } from './student.controllers';
 import {authentication} from '../../middleware/authenticate';
 import {authorization} from '../../middleware/authorization';
+import {validatePassword} from './student.helpers';
 
 const route = 'students';
 export const router = Router();
@@ -30,8 +32,11 @@ router.get(`/${route}/me`, authentication, authorization(['STUDENT']), getProfil
 //logout student
 router.post(`/${route}/logout/me`, authentication, logoutStudent);
 
-//update profile
-router.patch(`/${route}/:id`, authentication, authorization(['ADMIN', 'STAFF', 'STUDENT']), updateProfile);
+//update my profile
+router.patch(`/${route}/update/me`, authentication, authorization(['STUDENT']), updateSelf);
+
+//update profile by admin or staff
+router.patch(`/${route}/:id`, authentication, authorization(['ADMIN', 'STAFF']), updateProfile);
 
 //get student by id
 router.get(`/${route}/:id`, authentication, authorization(['STAFF', 'ADMIN']), getStudent);

@@ -1,7 +1,6 @@
 import {Document} from 'mongoose';
 export interface IUser extends Document {
   name: string;
-  isAdmin: boolean;
   designation: string;
   email: string;
   mobile: number;
@@ -10,7 +9,6 @@ export interface IUser extends Document {
   authToken: string;
   generateAuthToken(): any;
 }
-
 export interface IStudent extends Document {
   name: string;
   email: string;
@@ -22,6 +20,15 @@ export interface IStudent extends Document {
   authToken: string;
   generateAuthToken(): any;
 }
+
+export interface IDept extends Document {
+  name: string;
+  initials: string;
+  availableSeats: number;
+  occupiedSeats: number;
+  batch: number;
+}
+
 export enum Roles {
   ADMIN = 'ADMIN',
   STAFF = 'STAFF',
