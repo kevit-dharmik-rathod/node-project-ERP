@@ -21,4 +21,4 @@ const deptSchema = new Schema({
   }
 });
 
-export const dept = model('Department', deptSchema);
+export const Dept = model('Department', deptSchema);
