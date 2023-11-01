@@ -20,13 +20,18 @@ export interface IStudent extends Document {
   authToken: string;
   generateAuthToken(): any;
 }
-
 export interface IDept extends Document {
   name: string;
   initials: string;
   availableSeats: number;
   occupiedSeats: number;
   batch: number;
+}
+
+export interface IAttendance extends Document {
+  studentId: string;
+  date: Date;
+  isPresent: boolean;
 }
 
 export enum Roles {

@@ -36,13 +36,7 @@ export const createDepartment = async (req: Request, res: Response, next: NextFu
     next(err);
   }
 };
-export const seatQuotaCheck = (occupiedSeats: number, availableSeats: number): boolean => {
-  if (occupiedSeats === availableSeats) {
-    return false;
-  } else {
-    return true;
-  }
-};
+
 /**
  * get single department by it's id
  * @param {Request} req => Express request

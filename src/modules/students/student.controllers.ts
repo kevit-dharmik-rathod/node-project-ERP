@@ -163,6 +163,8 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
         dept_body.occupiedSeats += 1;
         await dept_body.save();
       }
+    } else {
+      throw utilityError(400, 'department not exist');
     }
     const data = req.body;
     const allowedProperties = ['name', 'email', 'mobile', 'sem', 'department'];
