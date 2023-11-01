@@ -37,10 +37,6 @@ const studentSchema = new Schema({
     type: Number,
     required: true
   },
-  // batch: {
-  //   type: Number,
-  //   required: true
-  // },
   authToken: {
     type: String
   }

@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import {createStudent, findByEmail, findStudentById, findStudents, findAndDelete} from './student.services';
 import {logger} from '../../utils/logger';
 import {utilityError} from '../../utils/utility-error-handler';
+import {getDeptById} from '../departments/department.services';
 
 /**
  * get all students
@@ -30,7 +31,22 @@ export const getStudents = async (req: Request, res: Response, next: NextFunctio
  */
 export const newStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
+    const department = await getDeptById(req.body.department);
+    const {occupiedSeats, availableSeats} = department;
+    if (occupiedSeats === availableSeats) {
+      throw utilityError(400, 'seats are full');
+    }
     const student = await createStudent(req.body);
+    if (student) {
+      if (occupiedSeats < availableSeats) {
+        department.occupiedSeats += 1;
+        await department.save();
+      } else {
+        throw utilityError(400, 'seats are full');
+      }
+    } else {
+      throw utilityError(400, 'Due to some validation failed student not created');
+    }
     return res.status(201).send({success: true, data: student});
   } catch (err) {
     logger.error(`Error occurred in controller while creating student ${err}`);
@@ -131,13 +147,25 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
  */
 export const updateProfile = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    const {role} = req['auth'];
     const student = await findStudentById(req.params.id);
     if (!student) {
       throw utilityError(400, 'User not exist with this id');
     }
+    const {department: studentDept} = student;
+    const dept_s = await getDeptById(studentDept);
+    const dept_body = await getDeptById(req.body.department);
+    if (dept_s && dept_body) {
+      if (dept_body.availableSeats === dept_body.occupiedSeats) {
+        throw utilityError(400, 'No vacancies available');
+      } else {
+        dept_s.occupiedSeats -= 1;
+        await dept_s.save();
+        dept_body.occupiedSeats += 1;
+        await dept_body.save();
+      }
+    }
     const data = req.body;
-    const allowedProperties = ['name', 'email', 'password', 'designation', 'mobile', 'department', 'isAdmin'];
+    const allowedProperties = ['name', 'email', 'mobile', 'sem', 'department'];
     for (const prop in data) {
       if (allowedProperties.includes(prop)) {
         student[prop] = data[prop];
@@ -193,8 +221,13 @@ export const updateSelf = async (req: Request, res: Response, next: NextFunction
  */
 export const deleteStudent = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
-    const student = await findAndDelete(req.params.id);
-    // logger.info(`student in controller ${student}`);
+    const student = await findStudentById(req.params.id);
+    const {department} = student;
+    const findDept = await getDeptById(department);
+    logger.info(`department in delete student ${department}`);
+    findDept.occupiedSeats -= 1;
+    await findDept.save();
+    await findAndDelete(req.params.id);
     return res.status(200).json({success: true, data: 'student deleted successfully' || 'student nor exist'});
   } catch (err) {
     logger.error(`Error in controller while deleting student ${err}`);

@@ -35,9 +35,9 @@ export const CreateNewDepartment = async (dept: object): Promise<object> => {
  * @param id => dept id
  * @returns {Promise<IDept>} => return a promise of dept object
  */
-export const getDeptById = async (id: string): Promise<IDept> => {
+export const getDeptById = async (_id: string): Promise<IDept> => {
   try {
-    return await Dept.findById(id);
+    return await Dept.findById(_id);
   } catch (err) {
     logger.error(`Error in dept service while finding dept by id: ${err}`);
     throw utilityError(500, err);
@@ -47,11 +47,11 @@ export const getDeptById = async (id: string): Promise<IDept> => {
 /**
  * find and delete dept by it's id
  * @param id
- * @returns
+ * @returns {Promise<IDept>} => return a promise with IDept object
  */
-export const getAndDelete = async (id: string): Promise<IDept> => {
+export const getAndDelete = async (_id: string): Promise<IDept> => {
   try {
-    return await Dept.findByIdAndDelete(id);
+    return await Dept.findOneAndDelete({_id});
   } catch (err) {
     logger.error(`Error in dept service while deleting dept by id: ${err}`);
     throw utilityError(500, err);

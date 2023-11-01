@@ -33,7 +33,7 @@ router.get(`/${route}/me`, authentication, authorization(['STUDENT']), getProfil
 router.post(`/${route}/logout/me`, authentication, logoutStudent);
 
 //update my profile
-router.patch(`/${route}/update/me`, authentication, authorization(['STUDENT']), validatePassword(), updateSelf);
+router.patch(`/${route}/update/me`, authentication, authorization(['STUDENT']), updateSelf);
 
 //update profile by admin or staff
 router.patch(`/${route}/:id`, authentication, authorization(['ADMIN', 'STAFF']), updateProfile);

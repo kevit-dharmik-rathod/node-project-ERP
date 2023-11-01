@@ -36,7 +36,13 @@ export const createDepartment = async (req: Request, res: Response, next: NextFu
     next(err);
   }
 };
-
+export const seatQuotaCheck = (occupiedSeats: number, availableSeats: number): boolean => {
+  if (occupiedSeats === availableSeats) {
+    return false;
+  } else {
+    return true;
+  }
+};
 /**
  * get single department by it's id
  * @param {Request} req => Express request
@@ -68,7 +74,7 @@ export const updateDepartment = async (req: Request, res: Response, next: NextFu
       throw utilityError(400, 'Department not exist');
     }
     const body = req.body;
-    const allowedProperties = ['name', 'initials', 'availableSeats'];
+    const allowedProperties = ['name', 'initials', 'availableSeats', 'batch', 'occupiedSeats'];
     for (const prop in body) {
       if (allowedProperties.includes(prop)) {
         dept[prop] = body[prop];
@@ -95,5 +101,7 @@ export const deleteDept = async (req: Request, res: Response, next: NextFunction
   try {
     const dept = await getAndDelete(req.params.id);
     return res.status(200).send({success: true, error: 'Department deleted successfully' || 'dept not found'});
-  } catch (err) {}
+  } catch (err) {
+    logger.error(`Error in controller while deleting department: ${err}`);
+  }
 };

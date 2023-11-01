@@ -32,7 +32,7 @@ export const createStudent = async (student: object): Promise<object> => {
 /**
  *
  * @param _id => student id
- * @returns {Promise<IStudent>} => promise with student
+ * @returns {Promise<IStudent>} => promise with IStudent object
  */
 export const findStudentById = async (_id: string): Promise<IStudent> => {
   try {
@@ -43,6 +43,11 @@ export const findStudentById = async (_id: string): Promise<IStudent> => {
   }
 };
 
+/**
+ *
+ * @param email => string
+ * @returns {Promise<IStudent>} => return a Promise with IStudent object
+ */
 export const findByEmail = async (email: string): Promise<IStudent> => {
   try {
     return await Student.findOne({email});
@@ -52,6 +57,11 @@ export const findByEmail = async (email: string): Promise<IStudent> => {
   }
 };
 
+/**
+ *
+ * @param _id => student id
+ * @returns {Promise<IStudent>} => return a Promise with IStudent object
+ */
 export const findAndDelete = async (_id: string): Promise<IStudent> => {
   try {
     return await Student.findByIdAndDelete(_id);

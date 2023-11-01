@@ -27,6 +27,7 @@ export interface IDept extends Document {
   initials: string;
   availableSeats: number;
   occupiedSeats: number;
+  batch: number;
 }
 
 export enum Roles {
