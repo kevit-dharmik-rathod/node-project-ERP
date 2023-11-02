@@ -29,3 +29,45 @@ export const attendanceCreate = async (attendance: object): Promise<object> => {
     throw utilityError(500, err);
   }
 };
+
+/**
+ * get all attendance of particular student
+ * @param _id => student id
+ * @returns {Promise<object[]>} => return promise with IAttendance array
+ */
+export const getAllAttendanceOfStudent = async (_id: string): Promise<IAttendance[]> => {
+  try {
+    return await Attendance.find({studentId: _id});
+  } catch (err) {
+    logger.error(`Error in services while getAllAttendanceOfStudent By student ID: ${err}`);
+    throw utilityError(500, err);
+  }
+};
+
+/**
+ * get single attendance by it's id
+ * @param _id => attendance id
+ * @returns {Promise<IAttendance>} => return promise with IAttendance object
+ */
+export const getAttendanceById = async (_id: string): Promise<IAttendance> => {
+  try {
+    return await Attendance.findById(_id);
+  } catch (err) {
+    logger.error(`Error in services while getAttendanceById: ${err}`);
+    throw utilityError(500, err);
+  }
+};
+
+/**
+ * delete attendance by it's id
+ * @param _id => attendance id
+ * @returns {Promise<IAttendance>} => return promise with IAttendance object
+ */
+export const deleteAttendanceById = async (_id: string): Promise<IAttendance> => {
+  try {
+    return await Attendance.findByIdAndDelete(_id);
+  } catch (err) {
+    logger.error(`Error in services while deleting attendance`);
+    throw utilityError(500, err);
+  }
+};

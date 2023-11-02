@@ -1,5 +1,7 @@
 import {Schema, model} from 'mongoose';
 import {Student} from '../../modules/students/student.model';
+import {Attendance} from '../../modules/Attendance/attendance.model';
+
 const deptSchema = new Schema({
   name: {
     type: String,
@@ -26,6 +28,11 @@ const deptSchema = new Schema({
 });
 
 deptSchema.post('findOneAndDelete', async function (_id: string) {
+  const students = await Student.find({department: _id});
+  for (let i = 0; i < students.length; i++) {
+    await Attendance.deleteMany({studentId: students[i]._id});
+  }
   await Student.deleteMany({department: _id});
 });
+
 export const Dept = model('Department', deptSchema);
