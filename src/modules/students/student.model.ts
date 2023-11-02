@@ -6,6 +6,7 @@ import {Roles} from '../../interface';
 import {utilityError} from '../../utils/utility-error-handler';
 import {logger} from '../../utils/logger';
 import {jwtToken} from '../../config';
+import {Attendance} from '../Attendance/attendance.model';
 
 const studentSchema = new Schema({
   name: {
@@ -69,6 +70,10 @@ studentSchema.pre('save', async function (next) {
     logger.info(`Error occurred while saving student: ${err}`);
     next(err);
   }
+});
+
+studentSchema.post('findOneAndDelete', async function (_id: string) {
+  await Attendance.deleteMany({studentId: _id});
 });
 
 export const Student = model('Student', studentSchema);
