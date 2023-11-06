@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from 'express';
 import {logger} from '../../utils/logger';
 import {utilityError} from '../../utils/utility-error-handler';
-import {getAllDept, CreateNewDepartment, getDeptById, getAndDelete} from './department.services';
+import {getAllDept, CreateNewDepartment, getDeptById, getAndDelete, task1, task2} from './department.services';
 
 /**
  * get all departments
@@ -97,5 +97,25 @@ export const deleteDept = async (req: Request, res: Response, next: NextFunction
     return res.status(200).send({success: true, error: 'Department deleted successfully' || 'dept not found'});
   } catch (err) {
     logger.error(`Error in controller while deleting department: ${err}`);
+  }
+};
+
+export const query1 = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const result = await task1();
+    return res.status(200).send({success: true, data: result});
+  } catch (err) {
+    logger.error(`Error in controller while perform query1 :${err}`);
+    next(err);
+  }
+};
+
+export const query2 = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const result = await task2(req.body);
+    return res.status(200).send({success: true, data: result});
+  } catch (err) {
+    logger.error(`Error in controller while perform query2 :${err}`);
+    next(err);
   }
 };
