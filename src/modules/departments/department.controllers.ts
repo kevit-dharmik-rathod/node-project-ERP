@@ -1,7 +1,16 @@
 import {Request, Response, NextFunction} from 'express';
 import {logger} from '../../utils/logger';
 import {utilityError} from '../../utils/utility-error-handler';
-import {getAllDept, CreateNewDepartment, getDeptById, getAndDelete} from './department.services';
+import {
+  getAllDept,
+  CreateNewDepartment,
+  getDeptById,
+  getAndDelete,
+  task1,
+  task2,
+  task3,
+  task4
+} from './department.services';
 
 /**
  * get all departments
@@ -97,5 +106,71 @@ export const deleteDept = async (req: Request, res: Response, next: NextFunction
     return res.status(200).send({success: true, error: 'Department deleted successfully' || 'dept not found'});
   } catch (err) {
     logger.error(`Error in controller while deleting department: ${err}`);
+  }
+};
+
+/**
+ * @param {Request} req => Express request
+ * @param {Response} res => Express response
+ * @param {NextFunction} next => Express middleware function
+ * @returns {Promise<Response>} => return promise with Express Response
+ */
+export const query1 = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const result = await task1();
+    return res.status(200).send({success: true, data: result});
+  } catch (err) {
+    logger.error(`Error in controller while perform query1 :${err}`);
+    next(err);
+  }
+};
+
+/**
+ * @param {Request} req => Express request
+ * @param {Response} res => Express response
+ * @param {NextFunction} next => Express middleware function
+ * @returns {Promise<Response>} => return promise with Express Response
+ */
+export const query2 = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const result = await task2(req.body);
+    return res.status(200).send({success: true, data: result});
+  } catch (err) {
+    logger.error(`Error in controller while perform query2 :${err}`);
+    next(err);
+  }
+};
+
+/**
+ * @param {Request} req => Express request
+ * @param {Response} res => Express response
+ * @param {NextFunction} next => Express middleware function
+ * @returns {Promise<Response>} => return promise with Express Response
+ */
+export const query3 = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    const result = await task3(req.body);
+    return res.status(200).send({success: true, data: result});
+  } catch (err) {
+    logger.error(`Error in controller while perform query3 :${err}`);
+    next(err);
+  }
+};
+
+/**
+ * @param {Request} req => Express request
+ * @param {Response} res => Express response
+ * @param {NextFunction} next => Express middleware function
+ * @returns {Promise<Response>} => return promise with Express Response
+ */
+export const query4 = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+  try {
+    logger.info('entering in to query4');
+    const result = await task4(req.body);
+    logger.info('result is ', result);
+    return res.status(200).send({success: true, data: result});
+  } catch (err) {
+    logger.error(`Error in controller while fetching vacant seats: ${err}`);
+    next(err);
   }
 };
