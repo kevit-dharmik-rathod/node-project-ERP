@@ -20,7 +20,7 @@ export const router = Router();
 router.post(`/${route}/signup`, authentication, authorization(['ADMIN']), createUser);
 
 //Get all users by only admin
-router.get(`/${route}`, authentication, authorization(['ADMIN']), getUsers);
+router.get(`/${route}/`, authentication, authorization(['ADMIN']), getUsers);
 
 //login user
 router.post(`/${route}/login`, userLogin);

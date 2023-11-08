@@ -113,7 +113,7 @@ export const updateSelf = async (req: Request, res: Response, next: NextFunction
     }
     const data = req.body;
     if (role === 'ADMIN') {
-      const allowedProperties = ['name', 'email', 'designation', 'mobile', 'department', 'isAdmin', 'password'];
+      const allowedProperties = ['name', 'email', 'designation', 'mobile', 'department', 'password'];
       for (const prop in data) {
         if (allowedProperties.includes(prop)) {
           user[prop] = data[prop];
