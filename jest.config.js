@@ -5,5 +5,5 @@ module.exports = {
   testMatch: ["**/**/*.test.ts"],
   verbose: true,
   forceExit: true,
-  testPathIgnorePatterns: ['db.test.ts', 'user.routes.test.ts', 'department.routes.test.ts']
+  testPathIgnorePatterns: [ 'student.routes.test.ts', 'department.routes.test.ts','db.test.ts' ]
 }; 

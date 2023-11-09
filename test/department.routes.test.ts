@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { app } from '../src/index';
 import { User } from '../src/modules/users/user.model';
-import db from './db';
+import db from './db.test';
 
 beforeAll(async () => {
     await db.setUpDatabase(); 
@@ -19,7 +19,7 @@ describe('user Login', ()=> {
 //create new department
 describe('create department', () => {
     test('should create department by admin', async () => {
-        const user = await User.findOne({email: db.admin.email});
+        const user = await User.findOne({email: db.staff1.email});
         const token = user?.authToken
         await request(app)
             .post('/depts/add').set('Authorization', `Bearer ${token}`)
@@ -77,7 +77,7 @@ describe('delete department by admin', () => {
     test('should delete department with it"s id', async () => {
         const user = await User.findOne({email: db.admin.email});
         const token = user?.authToken
-        const response = await request(app).delete(`/depts/delete/${db.dept2._id}`).set('Authorization', `Bearer ${token}`).expect(200).expect(200);
+        const response = await request(app).delete(`/depts/delete/${db.dept2._id}`).set('Authorization', `Bearer ${token}`).expect(200);
         expect(response.body.data).toBe('Department deleted successfully')
     });
 })

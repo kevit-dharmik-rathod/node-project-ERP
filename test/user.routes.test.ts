@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import { app } from '../src/index';
 import {logger} from '../src/utils/logger';
 import { User } from '../src/modules/users/user.model';
-import db from './db';
+import db from './db.test';
 
 beforeAll(async () => {
     await db.setUpDatabase(); 
@@ -86,7 +86,7 @@ describe('get Users', () => {
         await request(app).get('/users/').set('Authorization', `Bearer ${token}`).expect(200);
     });
     test('should not return all users because of unauthorized', async () => {
-        await request(app).get('/users/').expect(500);
+        await request(app).get('/users/').expect(401);
     });
 });
  

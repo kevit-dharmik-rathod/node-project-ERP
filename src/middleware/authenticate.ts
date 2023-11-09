@@ -9,6 +9,10 @@ import {jwtToken} from '../config';
 
 export const authentication = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const authorizationHeader = req.header('Authorization');
+    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+      throw utilityError(401, 'Please Authenticate');
+    }
     const token = req.header('Authorization').replace('Bearer ', '');
     if (!token) {
       throw utilityError(401, 'Please Authenticate');

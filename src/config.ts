@@ -6,7 +6,7 @@ export const server = {
 
 export const mongoConfig = {
   mongoUrl: MONGODB_URL,
-  dbName: DB_NAME //only for testing purpose => TEST_DB_NAME
+  dbName: TEST_DB_NAME //only for testing purpose => TEST_DB_NAME
 };
 
 export const jwtToken = {
