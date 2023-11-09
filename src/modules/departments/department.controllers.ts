@@ -86,7 +86,7 @@ export const updateDepartment = async (req: Request, res: Response, next: NextFu
       }
     }
     await dept.save();
-    return res.status(200).send({success: true, error: dept});
+    return res.status(200).send({success: true, data: dept});
   } catch (err) {
     logger.error(`Error in controller while updating department: ${err}`);
     next(err);
@@ -103,7 +103,7 @@ export const updateDepartment = async (req: Request, res: Response, next: NextFu
 export const deleteDept = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const dept = await getAndDelete(req.params.id);
-    return res.status(200).send({success: true, error: 'Department deleted successfully' || 'dept not found'});
+    return res.status(200).send({success: true, data: 'Department deleted successfully' || 'dept not found'});
   } catch (err) {
     logger.error(`Error in controller while deleting department: ${err}`);
   }

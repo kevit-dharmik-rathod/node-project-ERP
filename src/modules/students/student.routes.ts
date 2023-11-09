@@ -12,7 +12,6 @@ import {
 } from './student.controllers';
 import {authentication} from '../../middleware/authenticate';
 import {authorization} from '../../middleware/authorization';
-import {validatePassword} from './student.helpers';
 
 const route = 'students';
 export const router = Router();
@@ -20,7 +19,7 @@ export const router = Router();
 //get all students
 router.get(`/${route}/getStudents`, authentication, authorization(['STAFF', 'ADMIN']), getStudents);
 
-//post student
+//add student
 router.post(`/${route}/signup`, authentication, authorization(['STAFF', 'ADMIN']), newStudent);
 
 //login student
