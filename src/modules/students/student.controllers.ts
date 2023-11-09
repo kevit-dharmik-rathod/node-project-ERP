@@ -155,7 +155,7 @@ export const updateProfile = async (req: Request, res: Response, next: NextFunct
     const dept_s = await getDeptById(studentDept);
     const dept_body = await getDeptById(req.body.department);
     if (dept_s && dept_body) {
-      if (dept_body.availableSeats === dept_body.occupiedSeats || dept_body.occupiedSeats < dept_body.availableSeats) {
+      if (dept_body.availableSeats === dept_body.occupiedSeats || dept_body.occupiedSeats > dept_body.availableSeats) {
         throw utilityError(400, 'No vacancies available');
       } else {
         dept_s.occupiedSeats -= 1;

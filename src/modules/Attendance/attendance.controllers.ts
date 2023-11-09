@@ -42,7 +42,7 @@ export const createNewAttendance = async (req: Request, res: Response, next: Nex
       throw utilityError(400, 'student not exist with this id');
     }
     const attendance = await attendanceCreate(req.body);
-    return res.status(200).send({success: true, data: attendance});
+    return res.status(201).send({success: true, data: attendance});
   } catch (err) {
     logger.error(`Error in controller while createNewAttendance: ${err}`);
     next(err);
