@@ -17,7 +17,7 @@ describe('user Login', ()=> {
             "password":"dharmik12"
         }).expect(200);
     });
-})  
+}); 
 
 describe('create staff and user by admin', () => {
     test('should create user by admin', async () => {
@@ -60,14 +60,23 @@ describe('profile update by admin by id', () => {
 //get user by id only for admin access
 describe('get Users', () => {
     test('should return all users accessed by admin', async () => {
-         const user = await User.findOne({email: db.admin.email});
+        const user = await User.findOne({email: db.admin.email});
         const token = user?.authToken
         const response = await request(app).get(`/users/${db.staff2Id}`).set('Authorization', `Bearer ${token}`).expect(200);
         //expect(response.body.data.name).toBe('abhi');//because above we change name from abhi to abhinewname
         expect(response.body.data.name).toBe('abhinewname');
     });
 });
- 
+
+//delete user by admin
+describe('Trying to delete user', () => {
+    test('should delete user by admin', async () => {
+        const user = await User.findOne({email: db.admin.email});
+        const token = user?.authToken
+        const response = await request(app).delete(`/users/delete/${db.staff2._id}`).set('Authorization', `Bearer ${token}`).expect(200);
+        expect(response.body.data).toBe('User deleted successfully');
+    });
+})
 
 //only access by admin
 describe('get Users', () => {
