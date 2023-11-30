@@ -59,9 +59,13 @@ export const userFindByEmail = async (email: string): Promise<IUser> => {
  * @param _id => user id
  * @returns {Promise<IUser>} => return a promise with IUser
  */
-export const deleteUser = async (_id: string): Promise<IUser> => {
+export const deleteUser = async (_id: string): Promise<string> => {
   try {
-    return await User.findByIdAndDelete(_id);
+    const user = await User.findByIdAndDelete(_id);
+    if (!user) {
+      throw new Error('user not found');
+    }
+    return 'user deleted successfully';
   } catch (err) {
     logger.error(`Error occurred while deleting user: ${err}`);
     throw utilityError(500, err);

@@ -63,9 +63,13 @@ export const getAttendanceById = async (_id: string): Promise<IAttendance> => {
  * @param _id => attendance id
  * @returns {Promise<IAttendance>} => return promise with IAttendance object
  */
-export const deleteAttendanceById = async (_id: string): Promise<IAttendance> => {
+export const deleteAttendanceById = async (_id: string): Promise<string> => {
   try {
-    return await Attendance.findByIdAndDelete(_id);
+    const attendance = await Attendance.findByIdAndDelete(_id);
+    if (!attendance) {
+      throw new Error(`Attendance not found`);
+    }
+    return 'Attendance deleted successfully';
   } catch (err) {
     logger.error(`Error in services while deleting attendance`);
     throw utilityError(500, err);

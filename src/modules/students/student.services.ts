@@ -62,9 +62,13 @@ export const findByEmail = async (email: string): Promise<IStudent> => {
  * @param _id => student id
  * @returns {Promise<IStudent>} => return a Promise with IStudent object
  */
-export const findAndDelete = async (_id: string): Promise<IStudent> => {
+export const findAndDelete = async (_id: string): Promise<string> => {
   try {
-    return await Student.findOneAndDelete({_id});
+    const student = await Student.findOneAndDelete({_id});
+    if (!student) {
+      throw new Error('student not found ');
+    }
+    return 'student deleted successfully';
   } catch (err) {
     logger.error(`Error occurred in services while deleting user by it's id ${err}`);
     throw utilityError(500, err);

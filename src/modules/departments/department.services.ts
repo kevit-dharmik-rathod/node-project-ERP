@@ -49,9 +49,13 @@ export const getDeptById = async (_id: string): Promise<IDept> => {
  * @param id
  * @returns {Promise<IDept>} => return a promise with IDept object
  */
-export const getAndDelete = async (_id: string): Promise<IDept> => {
+export const getAndDelete = async (_id: string): Promise<string> => {
   try {
-    return await Dept.findOneAndDelete({_id});
+    const dept = await Dept.findOneAndDelete({_id});
+    if (!dept) {
+      throw new Error(`dept with id ${_id} not found`);
+    }
+    return 'deleted successfully';
   } catch (err) {
     logger.error(`Error in dept service while deleting dept by id: ${err}`);
     throw utilityError(500, err);
