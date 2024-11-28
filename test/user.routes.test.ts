@@ -1,8 +1,6 @@
 // user.routes.test.js
 import request from 'supertest';
-import bcrypt from 'bcryptjs';
-import { app } from '../src/index';
-import {logger} from '../src/utils/logger';
+import { app } from '../src/indexTest';
 import { User } from '../src/modules/users/user.model';
 import db from './db.test';
 

@@ -1,10 +1,8 @@
 import db from './db.test';
 import request from 'supertest';
-import {logger} from '../src/utils/logger';
-import { app } from '../src/index';
+import { app } from '../src/indexTest';
 import { User } from '../src/modules/users/user.model';
 import { Dept } from '../src/modules/departments/department.model';
-import { Student } from '../src/modules/students/student.model';
 beforeAll(async () => {
     await db.setUpDatabase(); 
 });
