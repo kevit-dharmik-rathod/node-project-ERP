@@ -103,7 +103,7 @@ export const updateDepartment = async (req: Request, res: Response, next: NextFu
 export const deleteDept = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   try {
     const dept = await getAndDelete(req.params.id);
-    return res.status(200).send({success: true, data: 'Department deleted successfully' || 'dept not found'});
+    return res.status(200).send({success: true, data: 'Department deleted successfully'});
   } catch (err) {
     logger.error(`Error in controller while deleting department: ${err}`);
   }

@@ -230,7 +230,7 @@ export const deleteStudent = async (req: Request, res: Response, next: NextFunct
     findDept.occupiedSeats -= 1;
     await findDept.save();
     await findAndDelete(req.params.id);
-    return res.status(200).json({success: true, data: 'student deleted successfully' || 'student nor exist'});
+    return res.status(200).json({success: true, data: 'student deleted successfully'});
   } catch (err) {
     logger.error(`Error in controller while deleting student ${err}`);
     next(err);
